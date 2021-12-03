@@ -30,5 +30,3 @@ It is a sequence of species that form a direct line of descent, with each new sp
 - Species: It is the group of organisms that can interbreed and from this interbreeding a fertile offspring is born, i.e. they can also have offspring among them.
 
 - Subspecies: refers to each of the groups in which a species is found.
-
-Translated with www.DeepL.com/Translator (free version)
