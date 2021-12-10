@@ -3,11 +3,10 @@
     <b-container>
       <b-row>
         <b-col>
-          <b-form enctype="multipart/form-data">
             <div>
               <div>
                 <b-form-group>
-                  <label for="taxonid">Taxeron Id</label>
+                  <label for="taxonid">Taxon Id</label>
                   <b-input-group>
                     <b-form-input
                       required
@@ -22,7 +21,6 @@
                       :disabled="!Boolean(onlyNumbers)"
                     >
                       Get Taxons
-                      <ModalTaxons :taxon="taxon"></ModalTaxons>
                     </b-button>
 
                     <b-button @click="insertTaxon"> Add Taxon </b-button>
@@ -37,7 +35,7 @@
                 </b-form-group>
               </div>
             </div>
-          </b-form>
+            <ModalTaxons :taxon="taxon"></ModalTaxons>
           <!--<pre>{{ JSON.stringify(this.listTaxon, null, 2) }}</pre>-->
         </b-col>
       </b-row>
