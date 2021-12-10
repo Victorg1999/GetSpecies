@@ -37,6 +37,15 @@
         </b-card-body>
       </b-collapse>
     </b-card>
+
+    <b-card no-body class="mb-1"> 
+      <b-card-header header-tag="header" class="p-1" role="tab">
+        <b-button block variant="dark" id="lineage"
+          >Validate</b-button
+        >
+      </b-card-header>  
+    </b-card>
+
   </b-modal>
 </template>
 

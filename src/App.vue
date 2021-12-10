@@ -1,18 +1,14 @@
 <template>
     <SampleFormComponent />
-    <!--<OrganismInfoModal />-->
-
 </template>
 
 <script>
 import SampleFormComponent from './components/SampleFormComponent.vue'
-//import OrganismInfoModal from './components/modal/OrganismInfoModal.vue'
 
 export default {
   name: 'App',
   components: {
     SampleFormComponent
-    //OrganismInfoModal
   }
 }
 </script>
