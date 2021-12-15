@@ -12,11 +12,11 @@
         >
         </b-form-input>
 
-        <b-button @click="getTaxon" :disabled="!Boolean(noEmpty)">
+        <b-button @click="getTaxon()" :disabled="!Boolean(noEmpty)">
           Get Taxons
         </b-button>
 
-        <b-button @click="insertTaxon" :disabled="!Boolean(noEmpty)">
+        <b-button @click="insertTaxon()" :disabled="!Boolean(noEmpty)">
           Add Taxon
         </b-button>
 
@@ -26,7 +26,12 @@
       </b-input-group>
     </b-form-group>
 
-    <ModalTaxons :taxon="taxon"></ModalTaxons>
+    <ModalTaxons v-if="Boolean(taxon)" :taxon="taxon"></ModalTaxons>
+
+    <!--  <router-link :to="{name: 'taxons', params: {id : item} }" 
+      v-for="(listTaxons, index) of listTaxon" :key="index">
+      <button> fotso {{this.listTaxon}}</button>
+    </router-link>-->
 
     <b-card-header header-tag="header" class="p-1" role="tab">
       <b-button
@@ -35,6 +40,7 @@
         variant="dark"
         id="taxonName"
       >
+
         {{ this.listTaxon }}
       </b-button>
 
@@ -70,20 +76,28 @@ export default {
   data() {
     return {
       toggle: false,
-      listTaxon: [], 
+      listTaxon: [],
       info: "",
-      taxon: Object,
+      taxon: null,
       taxonResponse: Object,
       form: {
         taxonId: "",
       },
+      //template: '<v-btn color="error" v-on:click="listTaxon++"> {{listTaxon}}</v-btn>'
     };
+  },
+  mounted(){
+    this.$root.$on('insert-taxon', this.insertTaxon)
   },
   methods: {
     NumbersOnly(evt) {
-      evt = (evt) ? evt : window.event;
-      var charCode = (evt.which) ? evt.which : evt.keyCode;
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+      evt = evt ? evt : window.event;
+      var charCode = evt.which ? evt.which : evt.keyCode;
+      if (
+        charCode > 31 &&
+        (charCode < 48 || charCode > 57) &&
+        charCode !== 46
+      ) {
         evt.preventDefault();
       } else {
         return true;
@@ -100,9 +114,12 @@ export default {
             //console.log(result.TAXON_SET);
             const taxonResponse = result.TAXON_SET.taxon[0];
             this.taxon = taxonResponse;
-            this.$root.$emit("bv::show::modal", "modal-taxons");
+            console.log(taxonResponse);
+            this.$nextTick(() => {
+              this.$root.$emit("bv::show::modal", "modal-taxons");
+            });
             //console.log(taxonResponse);
-            console.log(this.getTaxon);
+            //console.log(this.getTaxon);
           });
         })
         .catch((e) => {
@@ -117,8 +134,12 @@ export default {
           var parser = new xml2js.Parser();
           parser.parseStringPromise(response.data).then((result) => {
             const taxonResponse = result.TAXON_SET.taxon[0];
+            console.log(taxonResponse);
             this.taxon = taxonResponse;
-            this.listTaxon.push(taxonResponse.$.scientificName);
+            //console.log(this.taxon);
+            this.listTaxon.push(this.taxon.$.scientificName);
+            //this.$emit("click");
+            //this.$emit("hover")
             //console.log(this.listTaxon);
 
             //console.log(taxonResponse.$.scientificName);

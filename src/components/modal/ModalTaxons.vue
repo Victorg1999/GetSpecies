@@ -40,16 +40,20 @@
 
     <b-card no-body class="mb-1"> 
       <b-card-header header-tag="header" class="p-1" role="tab">
-        <b-button block variant="dark" id="lineage"
+     <!--  <b-button @click="insertTaxon()" block variant="dark" id="lineage"
           >Validate</b-button
-        >
-      </b-card-header>  
+        >-->
+
+        <b-button @click="buttonClickHandler" block variant="dark" id="lineage">Validate</b-button>
+
+      </b-card-header> 
     </b-card>
 
   </b-modal>
 </template>
 
 <script>
+
 export default {
   name: "modal-taxons",
   props: ["taxon"],
@@ -78,7 +82,13 @@ export default {
       return taxon.ranki;
     },
   },
-  mounted() {},
-  methods: {},
+  mounted() {
+  },
+  methods: {
+    buttonClickHandler() {
+      this.$root.$emit('insert-taxon', 'Adnan')
+    }
+     
+  },
 };
 </script>
