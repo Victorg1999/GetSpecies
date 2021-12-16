@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     buttonClickHandler() {
-      this.$root.$emit('insert-taxon', 'Adnan')
+      this.$root.$emit('insert-taxon', 'Victor')
     }
      
   },

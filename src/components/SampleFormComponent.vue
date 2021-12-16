@@ -16,10 +16,6 @@
           Get Taxons
         </b-button>
 
-        <b-button @click="insertTaxon()" :disabled="!Boolean(noEmpty)">
-          Add Taxon
-        </b-button>
-
         <b-form-invalid-feedback :state="noEmpty" id="input-live-feedback">
           Input can't be empty.
         </b-form-invalid-feedback>
@@ -40,7 +36,6 @@
         variant="dark"
         id="taxonName"
       >
-
         {{ this.listTaxon }}
       </b-button>
 
@@ -86,8 +81,8 @@ export default {
       //template: '<v-btn color="error" v-on:click="listTaxon++"> {{listTaxon}}</v-btn>'
     };
   },
-  mounted(){
-    this.$root.$on('insert-taxon', this.insertTaxon)
+  mounted() {
+    this.$root.$on("insert-taxon", this.insertTaxon);
   },
   methods: {
     NumbersOnly(evt) {
@@ -127,56 +122,15 @@ export default {
         });
     },
     insertTaxon() {
-      checkListService
-        .getEnaRecord(this.form.taxonId)
-        .then((response) => {
-          var xml2js = require("xml2js");
-          var parser = new xml2js.Parser();
-          parser.parseStringPromise(response.data).then((result) => {
-            const taxonResponse = result.TAXON_SET.taxon[0];
-            console.log(taxonResponse);
-            this.taxon = taxonResponse;
-            //console.log(this.taxon);
-            this.listTaxon.push(this.taxon.$.scientificName);
-            //this.$emit("click");
-            //this.$emit("hover")
-            //console.log(this.listTaxon);
+      var taxonNames = this.taxon.$.scientificName;
 
-            //console.log(taxonResponse.$.scientificName);
-
-            //this.listTaxon = "";
-            /*for(const nombre in taxonResponse.$.scientificName){
-              this.listTaxon+=nombre+"<br>";
-            }*/
-            //this.listTaxon = taxonResponse.$;
-            //console.log(taxonResponse);
-          });
-        })
-        .catch((e) => {
-          this.message = e;
-        });
-      //this.listTaxon.push(this.taxonResponse);
+      if (this.listTaxon.includes(taxonNames) === false)
+        this.listTaxon.push(taxonNames);
     },
     insertInfo() {
-      checkListService
-        .getEnaRecord(this.form.taxonId)
-        .then((response) => {
-          var xml2js = require("xml2js");
-          var parser = new xml2js.Parser();
-
-          parser.parseStringPromise(response.data).then((result) => {
-            //console.log("hola");
-            for (const name in result.TAXON_SET.taxon[0].$) {
-              this.info +=
-                name + ": " + result.TAXON_SET.taxon[0].$[name] + "<br>";
-            }
-            //this.info = result.TAXON_SET.taxon[0].$;
-            console.log(result.TAXON_SET.taxon[0].$);
-          });
-        })
-        .catch((e) => {
-          this.message = e;
-        });
+      for (const name in this.taxon.$) {
+        this.info += name + ": " + this.taxon.$[name] + "<br>";
+      }
     },
   },
 };
