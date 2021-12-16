@@ -4,55 +4,47 @@
       <label for="taxonid">Taxon Id</label>
       <b-input-group>
         <b-form-input
-          v-on:keypress="NumbersOnly"
           required
           id="taxonid"
           v-model="form.taxonId"
-          :state="noEmpty"
+          :state="!correctInput"
+          type="number"
         >
         </b-form-input>
 
-        <b-button @click="getTaxon()" :disabled="!Boolean(noEmpty)">
+        <b-button @click="getTaxon()" :disabled="correctInput">
           Get Taxons
         </b-button>
 
-        <b-form-invalid-feedback :state="noEmpty" id="input-live-feedback">
-          Input can't be empty.
+        <b-form-invalid-feedback
+          :state="!correctInput"
+          id="input-live-feedback"
+        >
+          Input can't be empty and only accept numbers.
         </b-form-invalid-feedback>
       </b-input-group>
     </b-form-group>
 
-    <ModalTaxons v-if="Boolean(taxon)" :taxon="taxon"></ModalTaxons>
+    <ModalTaxons
+      v-on:insert-taxon="insertTaxon"
+      v-if="Boolean(taxon)"
+      :taxon="taxon"
+    ></ModalTaxons>
 
-    <!--  <router-link :to="{name: 'taxons', params: {id : item} }" 
-      v-for="(listTaxons, index) of listTaxon" :key="index">
-      <button> fotso {{this.listTaxon}}</button>
-    </router-link>-->
-
-    <b-card-header header-tag="header" class="p-1" role="tab">
-      <b-button
-        @click="insertInfo"
-        v-b-toggle.taxonName
-        variant="dark"
-        id="taxonName"
+    <b-dropdown
+      v-if="listTaxon.length > 0"
+      text="Species List"
+      block
+      variant="primary"
+      class="n-2"
+    >
+      <b-dropdown-item
+        @click="infoOfModal(tax)"
+        v-for="tax in listTaxon"
+        v-bind:key="tax.$.scientificName"
+        >{{ tax.$.scientificName }}</b-dropdown-item
       >
-        {{ this.listTaxon }}
-      </b-button>
-
-      <b-collapse id="taxonName" accordion="taxonName" role="tabpanel">
-        <b-card-body>
-          <b-card-text>
-            <div v-html="this.info">
-              {{ this.info[0] }}
-            </div>
-          </b-card-text>
-        </b-card-body>
-      </b-collapse>
-
-      <br />
-    </b-card-header>
-
-    <!--<pre>{{ this.listTaxon }}</pre>-->
+    </b-dropdown>
   </b-container>
 </template>
 <script>
@@ -64,40 +56,27 @@ export default {
     ModalTaxons,
   },
   computed: {
-    noEmpty() {
-      return this.form.taxonId.length > 0 ? true : false;
+    correctInput() {
+      return (
+        this.form.taxonId.length === 0 || typeof this.form.taxonId === "number"
+      );
     },
   },
   data() {
     return {
       toggle: false,
       listTaxon: [],
-      info: "",
       taxon: null,
       taxonResponse: Object,
       form: {
         taxonId: "",
       },
-      //template: '<v-btn color="error" v-on:click="listTaxon++"> {{listTaxon}}</v-btn>'
     };
   },
   mounted() {
     this.$root.$on("insert-taxon", this.insertTaxon);
   },
   methods: {
-    NumbersOnly(evt) {
-      evt = evt ? evt : window.event;
-      var charCode = evt.which ? evt.which : evt.keyCode;
-      if (
-        charCode > 31 &&
-        (charCode < 48 || charCode > 57) &&
-        charCode !== 46
-      ) {
-        evt.preventDefault();
-      } else {
-        return true;
-      }
-    },
     getTaxon() {
       checkListService
         .getEnaRecord(this.form.taxonId)
@@ -106,31 +85,32 @@ export default {
           var parser = new xml2js.Parser();
 
           parser.parseStringPromise(response.data).then((result) => {
-            //console.log(result.TAXON_SET);
             const taxonResponse = result.TAXON_SET.taxon[0];
             this.taxon = taxonResponse;
             console.log(taxonResponse);
             this.$nextTick(() => {
               this.$root.$emit("bv::show::modal", "modal-taxons");
             });
-            //console.log(taxonResponse);
-            //console.log(this.getTaxon);
           });
         })
         .catch((e) => {
           this.message = e;
         });
     },
-    insertTaxon() {
-      var taxonNames = this.taxon.$.scientificName;
-
-      if (this.listTaxon.includes(taxonNames) === false)
-        this.listTaxon.push(taxonNames);
-    },
-    insertInfo() {
-      for (const name in this.taxon.$) {
-        this.info += name + ": " + this.taxon.$[name] + "<br>";
+    insertTaxon(value) {
+      const taxon = value;
+      if (
+        this.listTaxon.length === 0 ||
+        this.listTaxon.filter(
+          (txn) => txn.$.scientificName === taxon.$.scientificName
+        ).length === 0
+      ) {
+        this.listTaxon.push(taxon);
       }
+    },
+    infoOfModal(taxon) {
+      this.taxon = taxon;
+      this.$root.$emit("bv::show::modal", "modal-taxons");
     },
   },
 };
