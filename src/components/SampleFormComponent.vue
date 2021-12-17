@@ -89,7 +89,11 @@ export default {
             this.taxon = taxonResponse;
             console.log(taxonResponse);
             this.$nextTick(() => {
-              this.$root.$emit("bv::show::modal", "modal-taxons");
+                //if (this.taxon.$.scientificName === this.listTaxon ){
+                //  console.log("error");
+                //}else{
+                  this.$root.$emit("bv::show::modal", "modal-taxons");
+                //}
             });
           });
         })
@@ -107,12 +111,19 @@ export default {
       ) {
         this.listTaxon.push(taxon);
       }
+      localStorage.setItem("taxons", JSON.stringify(this.listTaxon));
     },
     infoOfModal(taxon) {
       this.taxon = taxon;
       this.$root.$emit("bv::show::modal", "modal-taxons");
     },
   },
+  created(){
+    let data = localStorage.getItem("taxons");
+    if(data != null){
+      this.listTaxon = JSON.parse(data);
+    }
+  }
 };
 </script>
 <style>
